@@ -1,0 +1,6 @@
+import React from 'react';
+
+// Importar React en el archivo de error handling
+// Estás importando React en el archivo de error handling.js
+
+// El archivo ya fue creado correctamente. Ahora voy a actualizarlo para incluir el import de React.
