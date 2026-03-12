@@ -1,0 +1,2 @@
+-- AGREGAR COLUMNA company_id A wash_queue PARA GESTIÓN DE FLOTILLAS
+ALTER TABLE wash_queue ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES companies(id);
