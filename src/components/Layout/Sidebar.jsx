@@ -2,11 +2,16 @@ import React from 'react';
 import { LogOut } from 'lucide-react';
 import LogoKousa from './LogoKousa';
 
-const Sidebar = ({ activeTab, setActiveTab, menuItems, handleLogout }) => {
+const Sidebar = ({ activeTab, setActiveTab, menuItems, handleLogout, branding }) => {
+  const sidebarBg = branding?.sidebarColor || '#0a0f1e';
+
   return (
-    <aside className="w-64 bg-luxury-dark text-white flex flex-col p-6 fixed h-full shadow-2xl z-20">
+    <aside 
+      className="w-64 text-white flex flex-col p-6 fixed h-full shadow-2xl z-20"
+      style={{ backgroundColor: sidebarBg }}
+    >
       <div className="mb-10">
-        <LogoKousa />
+        <LogoKousa branding={branding} />
       </div>
 
       <nav className="flex-1 space-y-2">

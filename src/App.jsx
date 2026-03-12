@@ -35,6 +35,7 @@ import { useWashQueue } from './hooks/useWashQueue';
 import { useSales } from './hooks/useSales';
 import { useFleets } from './hooks/useFleets';
 import { useEmployees } from './hooks/useEmployees';
+import { useBranding } from './hooks/useBranding';
 
 // Components
 import FleetView from './components/Fleet/FleetView';
@@ -52,6 +53,9 @@ const App = () => {
   const [typeFilter, setTypeFilter] = useState('all');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+
+  // Branding (logo + background)
+  const { branding, updateBranding, resetBranding, handleLogoUpload, handleBgImageUpload } = useBranding();
 
   // 1. Auth Hook
   const { 
@@ -416,14 +420,28 @@ const App = () => {
     );
   }
 
+  // Compute dynamic background style
+  const getBgStyle = () => {
+    if (branding.bgType === 'image' && branding.bgImageUrl) {
+      return {
+        backgroundImage: `url(${branding.bgImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      };
+    }
+    return { backgroundColor: branding.bgColor || '#f1f5f9' };
+  };
+
   return (
-    <div className="flex min-h-screen w-full bg-gray-100 font-montserrat">
+    <div className="flex min-h-screen w-full font-montserrat" style={getBgStyle()}>
       {/* Sidebar */}
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
         menuItems={menuItems} 
-        handleLogout={handleLogout} 
+        handleLogout={handleLogout}
+        branding={branding}
       />
 
       {/* Main Content */}
@@ -617,6 +635,206 @@ const App = () => {
         {/* Configuration View */}
         {activeTab === 'config' && (
           <div className="space-y-10 animate-in fade-in duration-500">
+
+            {/* Branding Panel */}
+            <div className="bg-white rounded-[3rem] shadow-xl p-10 border border-slate-100">
+              <div className="flex items-center gap-4 mb-10">
+                <div className="p-4 bg-luxury-red text-white rounded-3xl shadow-lg shadow-red-900/20">
+                  <Settings size={32} />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black uppercase tracking-tighter">Personalización</h3>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Logo y Fondo de la Aplicación</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Logo Upload */}
+                <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6">Logo de la Empresa</h4>
+                  <div 
+                    className="w-full h-32 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center mb-6 overflow-hidden bg-luxury-dark cursor-pointer hover:border-luxury-red transition-all"
+                    onClick={() => document.getElementById('logo-upload').click()}
+                  >
+                    {branding.logoUrl ? (
+                      <img src={branding.logoUrl} alt="Logo" className="max-h-24 max-w-full object-contain" />
+                    ) : (
+                      <div className="text-center">
+                        <p className="text-white/20 text-3xl font-black">{branding.logoText || 'KOUSA'}</p>
+                        <p className="text-[9px] font-black text-white/20 uppercase tracking-widest">Click para cambiar</p>
+                      </div>
+                    )}
+                  </div>
+                  <input 
+                    type="file" 
+                    id="logo-upload"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) await handleLogoUpload(file);
+                    }}
+                  />
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Nombre Principal</label>
+                      <input
+                        type="text"
+                        className="w-full p-4 rounded-2xl bg-white border border-slate-200 font-bold text-slate-800 focus:outline-none focus:border-luxury-red"
+                        value={branding.logoText || ''}
+                        placeholder="KOUSA"
+                        onChange={(e) => updateBranding({ logoText: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Nombre Secundario</label>
+                      <input
+                        type="text"
+                        className="w-full p-4 rounded-2xl bg-white border border-slate-200 font-bold text-slate-800 focus:outline-none focus:border-luxury-red"
+                        value={branding.logoSubtext || ''}
+                        placeholder="LUXURY"
+                        onChange={(e) => updateBranding({ logoSubtext: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Slogan / Tagline</label>
+                      <input
+                        type="text"
+                        className="w-full p-4 rounded-2xl bg-white border border-slate-200 font-bold text-slate-800 focus:outline-none focus:border-luxury-red"
+                        value={branding.tagline || ''}
+                        placeholder="Auto Import & Care"
+                        onChange={(e) => updateBranding({ tagline: e.target.value })}
+                      />
+                    </div>
+                    {branding.logoUrl && (
+                      <button
+                        onClick={() => updateBranding({ logoUrl: null })}
+                        className="w-full py-3 bg-red-50 text-luxury-red rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-red-100 transition-all"
+                      >
+                        Eliminar Imagen de Logo
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Background Settings */}
+                <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-200">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6">Fondo de la Aplicación</h4>
+                  
+                  <div className="space-y-5">
+                    <div className="flex rounded-2xl overflow-hidden border border-slate-200">
+                      {[
+                        { id: 'color', label: 'Color' },
+                        { id: 'image', label: 'Imagen' },
+                      ].map(opt => (
+                        <button
+                          key={opt.id}
+                          onClick={() => updateBranding({ bgType: opt.id })}
+                          className={`flex-1 py-3 text-xs font-black uppercase tracking-widest transition-all ${branding.bgType === opt.id ? 'bg-luxury-blue text-white' : 'bg-white text-slate-500 hover:bg-slate-50'}`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {branding.bgType === 'color' && (
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Color de Fondo</label>
+                        <div className="flex gap-3 items-center">
+                          <input
+                            type="color"
+                            className="w-16 h-14 rounded-2xl border-2 border-slate-200 cursor-pointer"
+                            value={branding.bgColor || '#f1f5f9'}
+                            onChange={(e) => updateBranding({ bgColor: e.target.value })}
+                          />
+                          <input
+                            type="text"
+                            className="flex-1 p-4 rounded-2xl bg-white border border-slate-200 font-mono text-slate-800 focus:outline-none focus:border-luxury-blue"
+                            value={branding.bgColor || '#f1f5f9'}
+                            onChange={(e) => updateBranding({ bgColor: e.target.value })}
+                          />
+                        </div>
+                        <div className="grid grid-cols-5 gap-2 mt-4">
+                          {['#f1f5f9','#1e293b','#0f172a','#faf7f2','#e2e8f0'].map(color => (
+                            <button
+                              key={color}
+                              onClick={() => updateBranding({ bgColor: color, bgType: 'color' })}
+                              className="w-full h-10 rounded-xl border-2 border-white shadow-sm hover:scale-105 transition-transform"
+                              style={{ backgroundColor: color }}
+                              title={color}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {branding.bgType === 'image' && (
+                      <div className="space-y-3">
+                        <div
+                          className="w-full h-32 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden bg-slate-100 cursor-pointer hover:border-luxury-red transition-all"
+                          onClick={() => document.getElementById('bg-upload').click()}
+                        >
+                          {branding.bgImageUrl ? (
+                            <img src={branding.bgImageUrl} alt="Background Preview" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="text-center">
+                              <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Subir Imagen de Fondo</p>
+                              <p className="text-slate-300 text-[9px] mt-1">JPG, PNG, WEBP — Click aquí</p>
+                            </div>
+                          )}
+                        </div>
+                        <input 
+                          type="file" 
+                          id="bg-upload"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) await handleBgImageUpload(file);
+                          }}
+                        />
+                        {branding.bgImageUrl && (
+                          <button
+                            onClick={() => updateBranding({ bgImageUrl: null, bgType: 'color' })}
+                            className="w-full py-3 bg-red-50 text-luxury-red rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-red-100 transition-all"
+                          >
+                            Eliminar Imagen de Fondo
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Sidebar Color */}
+                    <div className="space-y-2 border-t border-slate-200 pt-5 mt-2">
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Color del Panel Lateral</label>
+                      <div className="flex gap-3 items-center">
+                        <input
+                          type="color"
+                          className="w-16 h-14 rounded-2xl border-2 border-slate-200 cursor-pointer"
+                          value={branding.sidebarColor || '#0a0f1e'}
+                          onChange={(e) => updateBranding({ sidebarColor: e.target.value })}
+                        />
+                        <input
+                          type="text"
+                          className="flex-1 p-4 rounded-2xl bg-white border border-slate-200 font-mono text-slate-800 focus:outline-none focus:border-luxury-blue"
+                          value={branding.sidebarColor || '#0a0f1e'}
+                          onChange={(e) => updateBranding({ sidebarColor: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Reset */}
+                    <button
+                      onClick={resetBranding}
+                      className="w-full py-4 bg-slate-200 text-slate-600 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-300 transition-all mt-2"
+                    >
+                      Restaurar Configuración por Defecto
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="bg-white rounded-[3rem] shadow-xl p-10 border border-slate-100 max-w-2xl mx-auto">
               <div className="flex items-center gap-4 mb-10">
                 <div className="p-4 bg-luxury-blue text-white rounded-3xl shadow-lg shadow-blue-900/20">
