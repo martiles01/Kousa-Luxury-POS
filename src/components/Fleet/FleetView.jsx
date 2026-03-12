@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, FileText, DollarSign, History, Edit2, Plus, Car } from 'lucide-react';
+import { Package, FileText, DollarSign, History, Edit2, Plus, Car, Trash2 } from 'lucide-react';
 
 const FleetView = ({ 
   companies, 
@@ -7,7 +7,8 @@ const FleetView = ({
   onOpenHistory, 
   onOpenPayment, 
   onOpenFleetModal, 
-  onOpenVehicleModal 
+  onOpenVehicleModal,
+  onDeleteCompany
 }) => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -142,6 +143,13 @@ const FleetView = ({
                         title="Vincular Vehículo"
                       >
                         <Plus size={16} />
+                      </button>
+                      <button
+                        onClick={() => onDeleteCompany(company.id)}
+                        className="bg-red-50 hover:bg-luxury-red hover:text-white p-3 rounded-xl text-luxury-red transition-all shadow-sm active:scale-90"
+                        title="Eliminar Empresa"
+                      >
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>

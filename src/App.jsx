@@ -285,6 +285,12 @@ const App = () => {
       setEditingCompany(null);
     }
   };
+ 
+  const handleDeleteCompany = async (id) => {
+    if (confirm('¿Estás seguro de que deseas eliminar esta empresa? Todos los vehículos vinculados perderán su asociación.')) {
+      await deleteCompany(id);
+    }
+  };
 
   const handleApplyAddVehicle = async (formData) => {
     const result = editingVehicle
@@ -569,6 +575,7 @@ const App = () => {
               setFleetCompanyId(companyId || null);
               setIsVehicleModalOpen(true);
             }}
+            onDeleteCompany={handleDeleteCompany}
           />
         )}
 
