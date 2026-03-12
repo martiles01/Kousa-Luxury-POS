@@ -10,7 +10,8 @@ import {
   Settings,
   Users,
   History,
-  DollarSign
+  DollarSign,
+  Trash2
 } from 'lucide-react';
 
 import { supabase } from './supabaseClient';
@@ -116,6 +117,7 @@ const App = () => {
     checkVehicleFleet,
     recordPayment: handleRecordPayment,
     fetchHistory: handleFetchFleetHistory,
+    deleteCompany: deleteCompanyHook,
     loading: fleetLoading
   } = useFleets(session);
 
@@ -125,7 +127,7 @@ const App = () => {
     commissions,
     addEmployee: handleAddEmployee,
     updateEmployee: handleUpdateEmployee,
-    deleteEmployee: handleDeleteEmployee,
+    deleteEmployee: deleteEmployeeHook,
     loading: empLoading
   } = useEmployees(session, reportFilter);
 
@@ -156,6 +158,10 @@ const App = () => {
   const [isFleetPaymentOpen, setIsFleetPaymentOpen] = useState(false);
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
+  
+  // Custom Delete Confirmation state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   // Auto-detect Fleet on Plate Change
   useEffect(() => {
@@ -287,9 +293,26 @@ const App = () => {
   };
  
   const handleDeleteCompany = async (id) => {
-    if (confirm('¿Estás seguro de que deseas eliminar esta empresa? Todos los vehículos vinculados perderán su asociación.')) {
-      await deleteCompany(id);
+    setItemToDelete({ id, type: 'company' });
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!itemToDelete) return;
+
+    if (itemToDelete.type === 'company') {
+      await deleteCompanyHook(itemToDelete.id);
+    } else if (itemToDelete.type === 'employee') {
+      await handleDeleteEmployee(itemToDelete.id);
     }
+
+    setIsDeleteModalOpen(false);
+    setItemToDelete(null);
+  };
+
+  const handleDeleteEmployee = async (id) => {
+    setItemToDelete({ id, type: 'employee' });
+    setIsDeleteModalOpen(true);
   };
 
   const handleApplyAddVehicle = async (formData) => {
@@ -1111,7 +1134,35 @@ const App = () => {
           }
         }
       ` }} />
-    </div >
+      {/* MODAL DE CONFIRMACIÓN DE ELIMINACIÓN */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2.5rem] shadow-2xl max-w-md w-full p-10 border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="w-20 h-20 bg-red-50 text-luxury-red rounded-3xl flex items-center justify-center mb-8 mx-auto shadow-lg border border-red-100">
+              <Trash2 size={40} />
+            </div>
+            <h3 className="text-2xl font-black text-center uppercase tracking-tighter mb-4">¿Confirmar Eliminación?</h3>
+            <p className="text-slate-500 text-center text-sm leading-relaxed mb-10">
+              Esta acción es permanente. {itemToDelete?.type === 'company' ? 'Todos los vehículos vinculados a esta empresa perderán su asociación.' : 'Este empleado será marcado como inactivo.'}
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-200 transition-all border border-slate-200"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 py-4 bg-luxury-red text-white rounded-2xl font-black uppercase tracking-widest hover:bg-red-700 transition-all shadow-xl shadow-red-900/20"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
