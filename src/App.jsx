@@ -434,7 +434,7 @@ const App = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full font-montserrat" style={getBgStyle()}>
+    <div className="flex min-h-screen w-screen font-montserrat" style={getBgStyle()}>
       {/* Sidebar */}
       <Sidebar 
         activeTab={activeTab} 
@@ -445,7 +445,7 @@ const App = () => {
       />
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 p-8 min-h-screen">
+      <main className="flex-1 ml-0 lg:ml-64 p-4 sm:p-6 lg:p-8 min-h-screen w-full overflow-x-hidden">
         <Header activeTabLabel={menuItems.find(i => i.id === activeTab)?.label} />
 
         {/* Dashboard View */}
