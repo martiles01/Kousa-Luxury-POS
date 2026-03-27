@@ -5,8 +5,10 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 // Validar que las variables de entorno existan
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Faltan las variables de entorno de Supabase. Por favor configura VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.')
-}
+export const isSupabaseConfigured = !!supabaseUrl && !!supabaseAnonKey
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Si las variables no existen, exportar un cliente nulo para evitar errores de sintaxis
+// pero manejar la lógica visualmente en App.jsx
+export const supabase = isSupabaseConfigured 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
