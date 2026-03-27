@@ -14,7 +14,7 @@ import {
   Trash2
 } from 'lucide-react';
 
-import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { supabase, isSupabaseConfigured, envDebug } from './supabaseClient';
 import Sidebar from './components/Layout/Sidebar';
 import Header from './components/Layout/Header';
 import DashboardStats from './components/Dashboard/DashboardStats';
@@ -68,6 +68,24 @@ const App = () => {
             <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
               <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">Paso 2</span>
               <p className="text-sm text-slate-300">Añade <b>VITE_SUPABASE_URL</b> y <b>VITE_SUPABASE_ANON_KEY</b>.</p>
+            </div>
+          </div>
+
+          <div className="bg-slate-900/80 rounded-2xl p-4 mb-8 text-left border border-slate-700">
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Diagnóstico de Vercel</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-400">VITE_SUPABASE_URL:</span>
+                <span className={isSupabaseConfigured || envDebug.url !== 'Faltante' ? "text-emerald-400 font-mono" : "text-rose-400 font-mono"}>
+                  {envDebug.url}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-400">VITE_SUPABASE_ANON_KEY:</span>
+                <span className={isSupabaseConfigured || envDebug.key !== 'Faltante' ? "text-emerald-400 font-mono" : "text-rose-400 font-mono"}>
+                  {envDebug.key}
+                </span>
+              </div>
             </div>
           </div>
           
