@@ -110,7 +110,7 @@ const Dashboard = ({
 
       {/* Stats Cards Section */}
       {dashboardConfig.statsCards && (
-        <div className={`grid grid-cols-1 md:grid-cols-4 gap-6 ${isDashboardCustomizing && 'opacity-50 pointer-events-none'}`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-1 ${isDashboardCustomizing && 'opacity-50 pointer-events-none'}`}>
             <div className="bg-luxury-red p-8 rounded-[2.5rem] text-white shadow-xl shadow-red-900/20 transition-all hover:-translate-y-1 hover:shadow-2xl">
                 <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">Lavados Activos</p>
                 <div className="flex items-center justify-between mt-4">
@@ -147,10 +147,10 @@ const Dashboard = ({
         </div>
       )}
 
-      <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 ${isDashboardCustomizing && 'opacity-50 pointer-events-none'}`}>
+      <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 px-1 ${isDashboardCustomizing && 'opacity-50 pointer-events-none'}`}>
         {/* Activity Queue Section */}
         {dashboardConfig.activityQueue && (
-            <div className="md:col-span-1 bg-white p-8 rounded-[3rem] shadow-sm border border-slate-50">
+            <div className="md:col-span-2 bg-white p-6 lg:p-8 rounded-[3rem] shadow-sm border border-slate-50">
                 <h3 className="text-xl font-black text-slate-800 mb-6 uppercase tracking-tight">Actividad en Cola</h3>
                 <div className="space-y-4">
                     {washQueue.slice(0, 4).map(w => (
@@ -189,7 +189,7 @@ const Dashboard = ({
 
         {/* Revenue Breakdown Section */}
         {dashboardConfig.revenueBreakdown && (
-            <div className="md:col-span-1 bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col">
+            <div className="md:col-span-1 bg-white p-6 lg:p-8 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col">
                 <h3 className="text-xl font-black text-slate-800 mb-6 uppercase tracking-tight">Desglose de Ingresos</h3>
                 <div className="flex-1 flex flex-col justify-center space-y-8">
                     <div className="space-y-3">
@@ -222,10 +222,10 @@ const Dashboard = ({
         )}
 
         {/* Action Widgets Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:col-span-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 lg:col-span-3 md:col-span-3">
             {/* Popular Services Section */}
             {dashboardConfig.popularServices && (
-                <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100">
+                <div className="bg-white p-6 lg:p-8 rounded-[3rem] shadow-sm border border-slate-100">
                     <h3 className="text-lg font-black text-slate-800 mb-6 uppercase tracking-tight">Servicios Populares</h3>
                     <div className="space-y-4">
                     {serviceMetrics.slice(0, 3).map((m, idx) => (
@@ -244,7 +244,7 @@ const Dashboard = ({
 
             {/* Recent Sales Section */}
             {dashboardConfig.recentSales && (
-                <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100">
+                <div className="bg-white p-6 lg:p-8 rounded-[3rem] shadow-sm border border-slate-100">
                     <h3 className="text-lg font-black text-slate-800 mb-6 uppercase tracking-tight">Ventas Recientes</h3>
                     <div className="space-y-4">
                     {salesHistory.slice(0, 3).map(sale => (
@@ -263,7 +263,7 @@ const Dashboard = ({
 
             {/* New Order Action Card */}
             {dashboardConfig.newOrderCard && (
-                <div className="bg-luxury-blue p-8 rounded-[3rem] text-white shadow-lg shadow-blue-900/10 flex flex-col justify-center items-center text-center group hover:shadow-2xl hover:shadow-blue-900/20 transition-all">
+                <div className="bg-luxury-blue p-6 lg:p-8 rounded-[3rem] text-white shadow-lg shadow-blue-900/10 flex flex-col justify-center items-center text-center group hover:shadow-2xl hover:shadow-blue-900/20 transition-all">
                     <div className="relative mb-4">
                         <Plus className="opacity-30 group-hover:scale-110 group-hover:rotate-90 transition-all" size={48} />
                         <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-all"></div>
